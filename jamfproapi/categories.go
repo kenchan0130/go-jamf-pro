@@ -11,7 +11,7 @@ import (
 	"path"
 
 	"github.com/google/go-querystring/query"
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type CategoriesService service
@@ -29,7 +29,7 @@ type ListCategory struct {
 
 const categoriesPath = "/v1/categories"
 
-func (s *CategoriesService) Create(ctx context.Context, category *Category) (*string, *utils.Response, error) {
+func (s *CategoriesService) Create(ctx context.Context, category *Category) (*string, *jamf.Response, error) {
 	if category.Name == nil {
 		return nil, nil, errors.New("CategoriesService.Create(): cannot create category with nil Name")
 	}
@@ -42,9 +42,9 @@ func (s *CategoriesService) Create(ctx context.Context, category *Category) (*st
 		return nil, nil, fmt.Errorf("json.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: categoriesPath,
 		},
 		Body: bytes.NewBuffer(body),
@@ -75,10 +75,10 @@ func (s *CategoriesService) Create(ctx context.Context, category *Category) (*st
 	return &data.ID, resp, nil
 }
 
-func (s *CategoriesService) Delete(ctx context.Context, categoryID string) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *CategoriesService) Delete(ctx context.Context, categoryID string) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusNoContent},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(categoriesPath, categoryID),
 		},
 	})
@@ -90,7 +90,7 @@ func (s *CategoriesService) Delete(ctx context.Context, categoryID string) (*uti
 	return resp, nil
 }
 
-func (s *CategoriesService) DeleteMultiple(ctx context.Context, categoryIDs []string) (*utils.Response, error) {
+func (s *CategoriesService) DeleteMultiple(ctx context.Context, categoryIDs []string) (*jamf.Response, error) {
 	var data struct {
 		CategoryIDs []string `json:"ids"`
 	}
@@ -101,9 +101,9 @@ func (s *CategoriesService) DeleteMultiple(ctx context.Context, categoryIDs []st
 		return nil, fmt.Errorf("json.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusNoContent},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(categoriesPath, "delete-multiple"),
 		},
 		Body: bytes.NewBuffer(body),
@@ -116,10 +116,10 @@ func (s *CategoriesService) DeleteMultiple(ctx context.Context, categoryIDs []st
 	return resp, nil
 }
 
-func (s *CategoriesService) Get(ctx context.Context, categoryID string) (*Category, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *CategoriesService) Get(ctx context.Context, categoryID string) (*Category, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(categoriesPath, categoryID),
 		},
 	})
@@ -146,15 +146,15 @@ func (s *CategoriesService) Get(ctx context.Context, categoryID string) (*Catego
 	return &category, resp, nil
 }
 
-func (s *CategoriesService) List(ctx context.Context, options ListOptions) (*ListCategory, *utils.Response, error) {
+func (s *CategoriesService) List(ctx context.Context, options ListOptions) (*ListCategory, *jamf.Response, error) {
 	params, err := query.Values(options)
 	if err != nil {
 		return nil, nil, fmt.Errorf("query.Values(): %v", err)
 	}
 
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: categoriesPath,
 			Params: params,
 		},
@@ -182,7 +182,7 @@ func (s *CategoriesService) List(ctx context.Context, options ListOptions) (*Lis
 	return &listCategory, resp, nil
 }
 
-func (s *CategoriesService) Update(ctx context.Context, category *Category) (*Category, *utils.Response, error) {
+func (s *CategoriesService) Update(ctx context.Context, category *Category) (*Category, *jamf.Response, error) {
 	if category.ID == nil {
 		return nil, nil, errors.New("CategoriesService.Update(): cannot update category with nil ID")
 	}
@@ -198,9 +198,9 @@ func (s *CategoriesService) Update(ctx context.Context, category *Category) (*Ca
 		return nil, nil, fmt.Errorf("json.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(categoriesPath, *category.ID),
 		},
 		Body: bytes.NewBuffer(body),

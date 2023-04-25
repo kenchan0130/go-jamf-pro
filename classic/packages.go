@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type PackagesService service
@@ -58,7 +58,7 @@ type ListPackage struct {
 
 const packagesPath = "/packages"
 
-func (s *PackagesService) Create(ctx context.Context, pkg *Package) (*int, *utils.Response, error) {
+func (s *PackagesService) Create(ctx context.Context, pkg *Package) (*int, *jamf.Response, error) {
 	if pkg == nil {
 		return nil, nil, errors.New("PackagesService.Create(): cannot create nil package")
 	}
@@ -80,9 +80,9 @@ func (s *PackagesService) Create(ctx context.Context, pkg *Package) (*int, *util
 		return nil, nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			// When the ID is 0, the ID will be generated automatically at the server side.
 			Entity: path.Join(packagesPath, "id", "0"),
 		},
@@ -115,10 +115,10 @@ func (s *PackagesService) Create(ctx context.Context, pkg *Package) (*int, *util
 	return data.ID, resp, nil
 }
 
-func (s *PackagesService) Delete(ctx context.Context, packageID int) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *PackagesService) Delete(ctx context.Context, packageID int) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(packagesPath, "id", fmt.Sprint(packageID)),
 		},
 	})
@@ -130,10 +130,10 @@ func (s *PackagesService) Delete(ctx context.Context, packageID int) (*utils.Res
 	return resp, nil
 }
 
-func (s *PackagesService) Get(ctx context.Context, packageID int) (*Package, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *PackagesService) Get(ctx context.Context, packageID int) (*Package, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(packagesPath, "id", fmt.Sprint(packageID)),
 		},
 	})
@@ -160,10 +160,10 @@ func (s *PackagesService) Get(ctx context.Context, packageID int) (*Package, *ut
 	return &pkg, resp, nil
 }
 
-func (s *PackagesService) List(ctx context.Context) (*ListPackages, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *PackagesService) List(ctx context.Context) (*ListPackages, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: packagesPath,
 		},
 	})
@@ -190,7 +190,7 @@ func (s *PackagesService) List(ctx context.Context) (*ListPackages, *utils.Respo
 	return &listPackages, resp, nil
 }
 
-func (s *PackagesService) Update(ctx context.Context, pkg *Package) (*utils.Response, error) {
+func (s *PackagesService) Update(ctx context.Context, pkg *Package) (*jamf.Response, error) {
 	if pkg == nil {
 		return nil, errors.New("PackagesService.Update(): cannot update nil package")
 	}
@@ -206,9 +206,9 @@ func (s *PackagesService) Update(ctx context.Context, pkg *Package) (*utils.Resp
 		return nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(packagesPath, "id", fmt.Sprint(*pkg.ID)),
 		},
 		Body: bytes.NewBuffer(body),

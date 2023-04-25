@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type PoliciesService service
@@ -675,7 +675,7 @@ func (pui *PolicyUserInteraction) UnmarshalXML(d *xml.Decoder, start xml.StartEl
 
 const policiesPath = "/policies"
 
-func (s *PoliciesService) Create(ctx context.Context, policy *Policy) (*int, *utils.Response, error) {
+func (s *PoliciesService) Create(ctx context.Context, policy *Policy) (*int, *jamf.Response, error) {
 	if policy == nil {
 		return nil, nil, errors.New("PoliciesService.Create(): cannot create nil policy")
 	}
@@ -694,9 +694,9 @@ func (s *PoliciesService) Create(ctx context.Context, policy *Policy) (*int, *ut
 		return nil, nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			// When the ID is 0, the ID will be generated automatically at the server side.
 			Entity: path.Join(policiesPath, "id", "0"),
 		},
@@ -729,10 +729,10 @@ func (s *PoliciesService) Create(ctx context.Context, policy *Policy) (*int, *ut
 	return data.ID, resp, nil
 }
 
-func (s *PoliciesService) Delete(ctx context.Context, policyID int) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *PoliciesService) Delete(ctx context.Context, policyID int) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(policiesPath, "id", fmt.Sprint(policyID)),
 		},
 	})
@@ -744,10 +744,10 @@ func (s *PoliciesService) Delete(ctx context.Context, policyID int) (*utils.Resp
 	return resp, nil
 }
 
-func (s *PoliciesService) Get(ctx context.Context, policyID int) (*Policy, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *PoliciesService) Get(ctx context.Context, policyID int) (*Policy, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(policiesPath, "id", fmt.Sprint(policyID)),
 		},
 	})
@@ -774,10 +774,10 @@ func (s *PoliciesService) Get(ctx context.Context, policyID int) (*Policy, *util
 	return &policy, resp, nil
 }
 
-func (s *PoliciesService) List(ctx context.Context) (*ListPolicies, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *PoliciesService) List(ctx context.Context) (*ListPolicies, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: policiesPath,
 		},
 	})
@@ -804,7 +804,7 @@ func (s *PoliciesService) List(ctx context.Context) (*ListPolicies, *utils.Respo
 	return &listPolicies, resp, nil
 }
 
-func (s *PoliciesService) Update(ctx context.Context, policy *Policy) (*utils.Response, error) {
+func (s *PoliciesService) Update(ctx context.Context, policy *Policy) (*jamf.Response, error) {
 	if policy == nil {
 		return nil, errors.New("PoliciesService.Update(): cannot create nil policy")
 	}
@@ -826,9 +826,9 @@ func (s *PoliciesService) Update(ctx context.Context, policy *Policy) (*utils.Re
 		return nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(policiesPath, "id", fmt.Sprint(*policy.General.ID)),
 		},
 		Body: bytes.NewBuffer(body),

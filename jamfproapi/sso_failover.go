@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type SSOFailoverService service
@@ -20,10 +20,10 @@ type SSOFailover struct {
 
 const ssoFailoverPath = "/v1/sso/failover"
 
-func (s *SSOFailoverService) Get(ctx context.Context) (*SSOFailover, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *SSOFailoverService) Get(ctx context.Context) (*SSOFailover, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: ssoFailoverPath,
 		},
 	})
@@ -50,10 +50,10 @@ func (s *SSOFailoverService) Get(ctx context.Context) (*SSOFailover, *utils.Resp
 	return &ssoFailover, resp, nil
 }
 
-func (s *SSOFailoverService) Generate(ctx context.Context) (*SSOFailover, *utils.Response, error) {
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+func (s *SSOFailoverService) Generate(ctx context.Context) (*SSOFailover, *jamf.Response, error) {
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(ssoFailoverPath, "generate"),
 		},
 	})

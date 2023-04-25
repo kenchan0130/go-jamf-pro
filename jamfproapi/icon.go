@@ -11,7 +11,7 @@ import (
 	"path"
 
 	"github.com/google/go-querystring/query"
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type IconService service
@@ -29,15 +29,15 @@ type IconContentOptions struct {
 
 const iconPath = "/v1/icon"
 
-func (s *IconService) Download(ctx context.Context, iconID string, options IconContentOptions) (*utils.Response, error) {
+func (s *IconService) Download(ctx context.Context, iconID string, options IconContentOptions) (*jamf.Response, error) {
 	params, err := query.Values(options)
 	if err != nil {
 		return nil, fmt.Errorf("query.Values(): %v", err)
 	}
 
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(iconPath, "download", iconID),
 			Params: params,
 		},
@@ -50,10 +50,10 @@ func (s *IconService) Download(ctx context.Context, iconID string, options IconC
 	return resp, nil
 }
 
-func (s *IconService) Get(ctx context.Context, iconID string) (*Icon, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *IconService) Get(ctx context.Context, iconID string) (*Icon, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(iconPath, iconID),
 		},
 	})
@@ -80,7 +80,7 @@ func (s *IconService) Get(ctx context.Context, iconID string) (*Icon, *utils.Res
 	return &icon, resp, nil
 }
 
-func (s *IconService) Upload(ctx context.Context, iconName string, src io.Reader) (*Icon, *utils.Response, error) {
+func (s *IconService) Upload(ctx context.Context, iconName string, src io.Reader) (*Icon, *jamf.Response, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", iconName)
@@ -100,9 +100,9 @@ func (s *IconService) Upload(ctx context.Context, iconName string, src io.Reader
 		return nil, nil, fmt.Errorf("writer.Close(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: iconPath,
 		},
 		ContentType: contentType,

@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type DistributionFileUploadService service
@@ -28,16 +28,16 @@ const (
 
 const distributionFileUploadPath = "/dbfileupload"
 
-func (s *DistributionFileUploadService) Upload(ctx context.Context, packageID int, packageName string, fileType DistributionFileUploadFileType, destination DistributionFileUploadDestination, src io.Reader) (*utils.Response, error) {
+func (s *DistributionFileUploadService) Upload(ctx context.Context, packageID int, packageName string, fileType DistributionFileUploadFileType, destination DistributionFileUploadDestination, src io.Reader) (*jamf.Response, error) {
 	body := new(bytes.Buffer)
 
 	if _, err := io.Copy(body, src); err != nil {
 		return nil, fmt.Errorf("io.Copy(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: distributionFileUploadPath,
 		},
 		ContentType: "application/octet-stream",

@@ -11,7 +11,7 @@ import (
 	"path"
 
 	"github.com/google/go-querystring/query"
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type ScriptsService service
@@ -51,7 +51,7 @@ type ListScript struct {
 
 const scriptsPath = "/v1/scripts"
 
-func (s *ScriptsService) Create(ctx context.Context, script *Script) (*string, *utils.Response, error) {
+func (s *ScriptsService) Create(ctx context.Context, script *Script) (*string, *jamf.Response, error) {
 	if script.Name == nil {
 		return nil, nil, errors.New("ScriptsService.Create(): cannot create script with nil Name")
 	}
@@ -61,9 +61,9 @@ func (s *ScriptsService) Create(ctx context.Context, script *Script) (*string, *
 		return nil, nil, fmt.Errorf("json.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: scriptsPath,
 		},
 		Body: bytes.NewBuffer(body),
@@ -94,10 +94,10 @@ func (s *ScriptsService) Create(ctx context.Context, script *Script) (*string, *
 	return &data.ID, resp, nil
 }
 
-func (s *ScriptsService) Delete(ctx context.Context, scriptID string) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *ScriptsService) Delete(ctx context.Context, scriptID string) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusNoContent},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(scriptsPath, scriptID),
 		},
 	})
@@ -109,10 +109,10 @@ func (s *ScriptsService) Delete(ctx context.Context, scriptID string) (*utils.Re
 	return resp, nil
 }
 
-func (s *ScriptsService) Get(ctx context.Context, scriptID string) (*Script, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *ScriptsService) Get(ctx context.Context, scriptID string) (*Script, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(scriptsPath, scriptID),
 		},
 	})
@@ -139,15 +139,15 @@ func (s *ScriptsService) Get(ctx context.Context, scriptID string) (*Script, *ut
 	return &script, resp, nil
 }
 
-func (s *ScriptsService) List(ctx context.Context, options ListOptions) (*ListScript, *utils.Response, error) {
+func (s *ScriptsService) List(ctx context.Context, options ListOptions) (*ListScript, *jamf.Response, error) {
 	params, err := query.Values(options)
 	if err != nil {
 		return nil, nil, fmt.Errorf("query.Values(): %v", err)
 	}
 
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: scriptsPath,
 			Params: params,
 		},
@@ -175,7 +175,7 @@ func (s *ScriptsService) List(ctx context.Context, options ListOptions) (*ListSc
 	return &listScript, resp, nil
 }
 
-func (s *ScriptsService) Update(ctx context.Context, script *Script) (*Script, *utils.Response, error) {
+func (s *ScriptsService) Update(ctx context.Context, script *Script) (*Script, *jamf.Response, error) {
 	if script.ID == nil {
 		return nil, nil, errors.New("ScriptsService.Update(): cannot update script with nil ID")
 	}
@@ -188,9 +188,9 @@ func (s *ScriptsService) Update(ctx context.Context, script *Script) (*Script, *
 		return nil, nil, fmt.Errorf("json.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(scriptsPath, *script.ID),
 		},
 		Body: bytes.NewBuffer(body),

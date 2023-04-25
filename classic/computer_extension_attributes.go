@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type ComputerExtensionAttributesService service
@@ -81,7 +81,7 @@ type ListComputerExtensionAttribute struct {
 
 const computerExtensionAttributesPath = "/computerextensionattributes"
 
-func (s *ComputerExtensionAttributesService) Create(ctx context.Context, computerExtensionAttribute *ComputerExtensionAttribute) (*int, *utils.Response, error) {
+func (s *ComputerExtensionAttributesService) Create(ctx context.Context, computerExtensionAttribute *ComputerExtensionAttribute) (*int, *jamf.Response, error) {
 	if computerExtensionAttribute == nil {
 		return nil, nil, errors.New("ComputerExtensionAttributesService.Create(): cannot create nil computer extension attribute")
 	}
@@ -100,9 +100,9 @@ func (s *ComputerExtensionAttributesService) Create(ctx context.Context, compute
 		return nil, nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			// When the ID is 0, the ID will be generated automatically at the server side.
 			Entity: path.Join(computerExtensionAttributesPath, "id", "0"),
 		},
@@ -135,10 +135,10 @@ func (s *ComputerExtensionAttributesService) Create(ctx context.Context, compute
 	return data.ID, resp, nil
 }
 
-func (s *ComputerExtensionAttributesService) Delete(ctx context.Context, computerExtensionAttributeID int) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *ComputerExtensionAttributesService) Delete(ctx context.Context, computerExtensionAttributeID int) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(computerExtensionAttributesPath, "id", fmt.Sprint(computerExtensionAttributeID)),
 		},
 	})
@@ -150,10 +150,10 @@ func (s *ComputerExtensionAttributesService) Delete(ctx context.Context, compute
 	return resp, nil
 }
 
-func (s *ComputerExtensionAttributesService) Get(ctx context.Context, computerExtensionAttributeID int) (*ComputerExtensionAttribute, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *ComputerExtensionAttributesService) Get(ctx context.Context, computerExtensionAttributeID int) (*ComputerExtensionAttribute, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(computerExtensionAttributesPath, "id", fmt.Sprint(computerExtensionAttributeID)),
 		},
 	})
@@ -180,10 +180,10 @@ func (s *ComputerExtensionAttributesService) Get(ctx context.Context, computerEx
 	return &computerExtensionAttribute, resp, nil
 }
 
-func (s *ComputerExtensionAttributesService) List(ctx context.Context) (*ListComputerExtensionAttributes, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *ComputerExtensionAttributesService) List(ctx context.Context) (*ListComputerExtensionAttributes, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: computerExtensionAttributesPath,
 		},
 	})
@@ -210,7 +210,7 @@ func (s *ComputerExtensionAttributesService) List(ctx context.Context) (*ListCom
 	return &listComputerExtensionAttributes, resp, nil
 }
 
-func (s *ComputerExtensionAttributesService) Update(ctx context.Context, computerExtensionAttribute *ComputerExtensionAttribute) (*utils.Response, error) {
+func (s *ComputerExtensionAttributesService) Update(ctx context.Context, computerExtensionAttribute *ComputerExtensionAttribute) (*jamf.Response, error) {
 	if computerExtensionAttribute == nil {
 		return nil, errors.New("ComputerExtensionAttributesService.Update(): cannot create nil computer extension attribute")
 	}
@@ -229,9 +229,9 @@ func (s *ComputerExtensionAttributesService) Update(ctx context.Context, compute
 		return nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(computerExtensionAttributesPath, "id", fmt.Sprint(*computerExtensionAttribute.ID)),
 		},
 		Body: bytes.NewBuffer(body),

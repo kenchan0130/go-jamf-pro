@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type APIAuthenticationService service
@@ -27,13 +27,13 @@ type AuthToken struct {
 
 const apiAuthenticationPath = "/v1/auth"
 
-func (s *APIAuthenticationService) Token(ctx context.Context, username string, password string) (*AuthToken, *utils.Response, error) {
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+func (s *APIAuthenticationService) Token(ctx context.Context, username string, password string) (*AuthToken, *jamf.Response, error) {
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
 		RequestMiddlewareFunc: func(r *http.Request) {
 			r.SetBasicAuth(username, password)
 		},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(apiAuthenticationPath, "token"),
 		},
 	})

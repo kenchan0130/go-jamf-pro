@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type service struct {
@@ -23,7 +23,7 @@ type services struct {
 }
 
 type Client struct {
-	*utils.BaseClient
+	*jamf.BaseClient
 
 	common service
 	services
@@ -35,7 +35,7 @@ func NewClient(serverURL string, username string, password string) (*Client, err
 		return nil, fmt.Errorf("url.Parse(): %v", err)
 	}
 
-	client := utils.NewBaseClient(u)
+	client := jamf.NewBaseClient(u)
 
 	c := &Client{
 		BaseClient: client,

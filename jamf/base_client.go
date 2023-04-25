@@ -1,7 +1,7 @@
 // Referred https://github.com/manicminer/hamilton
 // Apache License 2.0 https://github.com/manicminer/hamilton/blob/main/LICENSE
 
-package utils
+package jamf
 
 import (
 	"bytes"

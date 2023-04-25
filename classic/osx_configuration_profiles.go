@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type OSXConfigurationProfilesService service
@@ -176,7 +176,7 @@ const (
 
 const osxConfigurationProfilesPath = "/osxconfigurationprofiles"
 
-func (s *OSXConfigurationProfilesService) Create(ctx context.Context, osxConfigurationProfile *OSXConfigurationProfile) (*int, *utils.Response, error) {
+func (s *OSXConfigurationProfilesService) Create(ctx context.Context, osxConfigurationProfile *OSXConfigurationProfile) (*int, *jamf.Response, error) {
 	if osxConfigurationProfile == nil {
 		return nil, nil, errors.New("OSXConfigurationProfilesService.Create(): cannot create nil OSX configuration profile")
 	}
@@ -198,9 +198,9 @@ func (s *OSXConfigurationProfilesService) Create(ctx context.Context, osxConfigu
 		return nil, nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			// When the ID is 0, the ID will be generated automatically at the server side.
 			Entity: path.Join(osxConfigurationProfilesPath, "id", "0"),
 		},
@@ -233,10 +233,10 @@ func (s *OSXConfigurationProfilesService) Create(ctx context.Context, osxConfigu
 	return data.ID, resp, nil
 }
 
-func (s *OSXConfigurationProfilesService) Delete(ctx context.Context, osxConfigurationProfileID int) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *OSXConfigurationProfilesService) Delete(ctx context.Context, osxConfigurationProfileID int) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(osxConfigurationProfilesPath, "id", fmt.Sprint(osxConfigurationProfileID)),
 		},
 	})
@@ -248,10 +248,10 @@ func (s *OSXConfigurationProfilesService) Delete(ctx context.Context, osxConfigu
 	return resp, nil
 }
 
-func (s *OSXConfigurationProfilesService) Get(ctx context.Context, osxConfigurationProfileID int) (*OSXConfigurationProfile, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *OSXConfigurationProfilesService) Get(ctx context.Context, osxConfigurationProfileID int) (*OSXConfigurationProfile, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(osxConfigurationProfilesPath, "id", fmt.Sprint(osxConfigurationProfileID)),
 		},
 	})
@@ -278,10 +278,10 @@ func (s *OSXConfigurationProfilesService) Get(ctx context.Context, osxConfigurat
 	return &osxConfigurationProfile, resp, nil
 }
 
-func (s *OSXConfigurationProfilesService) List(ctx context.Context) (*ListOSXConfigurationProfiles, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *OSXConfigurationProfilesService) List(ctx context.Context) (*ListOSXConfigurationProfiles, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: osxConfigurationProfilesPath,
 		},
 	})
@@ -308,7 +308,7 @@ func (s *OSXConfigurationProfilesService) List(ctx context.Context) (*ListOSXCon
 	return &listOSXConfigurationProfiles, resp, nil
 }
 
-func (s *OSXConfigurationProfilesService) Update(ctx context.Context, osxConfigurationProfile *OSXConfigurationProfile) (*utils.Response, error) {
+func (s *OSXConfigurationProfilesService) Update(ctx context.Context, osxConfigurationProfile *OSXConfigurationProfile) (*jamf.Response, error) {
 	if osxConfigurationProfile == nil {
 		return nil, errors.New("OSXConfigurationProfilesService.Update(): cannot update nil OSX configuration profile")
 	}
@@ -330,9 +330,9 @@ func (s *OSXConfigurationProfilesService) Update(ctx context.Context, osxConfigu
 		return nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(osxConfigurationProfilesPath, "id", fmt.Sprint(*osxConfigurationProfile.General.ID)),
 		},
 		Body: bytes.NewBuffer(body),

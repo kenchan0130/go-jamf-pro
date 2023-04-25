@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type ComputerGroupsService service
@@ -93,7 +93,7 @@ type ListComputerGroup struct {
 
 const computerGroupsPath = "/computergroups"
 
-func (s *ComputerGroupsService) Create(ctx context.Context, computerGroup *ComputerGroup) (*int, *utils.Response, error) {
+func (s *ComputerGroupsService) Create(ctx context.Context, computerGroup *ComputerGroup) (*int, *jamf.Response, error) {
 	if computerGroup == nil {
 		return nil, nil, errors.New("ComputerGroupsService.Create(): cannot create nil computer group")
 	}
@@ -115,9 +115,9 @@ func (s *ComputerGroupsService) Create(ctx context.Context, computerGroup *Compu
 		return nil, nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			// When the ID is 0, the ID will be generated automatically at the server side.
 			Entity: path.Join(computerGroupsPath, "id", "0"),
 		},
@@ -150,10 +150,10 @@ func (s *ComputerGroupsService) Create(ctx context.Context, computerGroup *Compu
 	return data.ID, resp, nil
 }
 
-func (s *ComputerGroupsService) Delete(ctx context.Context, computerGroupID int) (*utils.Response, error) {
-	resp, _, err := s.client.Delete(ctx, utils.DeleteHttpRequestInput{
+func (s *ComputerGroupsService) Delete(ctx context.Context, computerGroupID int) (*jamf.Response, error) {
+	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(computerGroupsPath, "id", fmt.Sprint(computerGroupID)),
 		},
 	})
@@ -165,10 +165,10 @@ func (s *ComputerGroupsService) Delete(ctx context.Context, computerGroupID int)
 	return resp, nil
 }
 
-func (s *ComputerGroupsService) Get(ctx context.Context, computerGroupID int) (*ComputerGroup, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *ComputerGroupsService) Get(ctx context.Context, computerGroupID int) (*ComputerGroup, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(computerGroupsPath, "id", fmt.Sprint(computerGroupID)),
 		},
 	})
@@ -195,10 +195,10 @@ func (s *ComputerGroupsService) Get(ctx context.Context, computerGroupID int) (*
 	return &computerGroup, resp, nil
 }
 
-func (s *ComputerGroupsService) List(ctx context.Context) (*ListComputerGroups, *utils.Response, error) {
-	resp, _, err := s.client.Get(ctx, utils.GetHttpRequestInput{
+func (s *ComputerGroupsService) List(ctx context.Context) (*ListComputerGroups, *jamf.Response, error) {
+	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: computerGroupsPath,
 		},
 	})
@@ -225,7 +225,7 @@ func (s *ComputerGroupsService) List(ctx context.Context) (*ListComputerGroups, 
 	return &listComputerGroups, resp, nil
 }
 
-func (s *ComputerGroupsService) Update(ctx context.Context, computerGroup *ComputerGroup) (*utils.Response, error) {
+func (s *ComputerGroupsService) Update(ctx context.Context, computerGroup *ComputerGroup) (*jamf.Response, error) {
 	if computerGroup == nil {
 		return nil, errors.New("ComputerGroupsService.Update(): cannot update nil computer group")
 	}
@@ -247,9 +247,9 @@ func (s *ComputerGroupsService) Update(ctx context.Context, computerGroup *Compu
 		return nil, fmt.Errorf("xml.Marshal(): %v", err)
 	}
 
-	resp, _, err := s.client.Put(ctx, utils.PutHttpRequestInput{
+	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: path.Join(computerGroupsPath, "id", fmt.Sprint(*computerGroup.ID)),
 		},
 		Body: bytes.NewBuffer(body),

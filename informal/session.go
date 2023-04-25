@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/kenchan0130/go-jamf-pro/utils"
+	"github.com/kenchan0130/go-jamf-pro/jamf"
 )
 
 type SessionService service
 
-func (s *SessionService) Create(ctx context.Context, loginURL string) (*utils.Response, error) {
+func (s *SessionService) Create(ctx context.Context, loginURL string) (*jamf.Response, error) {
 	u, err := url.Parse(loginURL)
 	if err != nil {
 		return nil, fmt.Errorf("url.Parse(): %v", err)
@@ -23,10 +23,10 @@ func (s *SessionService) Create(ctx context.Context, loginURL string) (*utils.Re
 		"password": {s.password},
 	}
 
-	resp, _, err := s.client.Post(ctx, utils.PostHttpRequestInput{
+	resp, _, err := s.client.Post(ctx, jamf.PostHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusFound},
 		ContentType:      "application/x-www-form-urlencoded",
-		Uri: utils.Uri{
+		Uri: jamf.Uri{
 			Entity: u.Path,
 			Params: u.Query(),
 		},
