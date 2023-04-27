@@ -62,9 +62,7 @@ func testBody(t *testing.T, r *http.Request, want []byte) {
 	}
 }
 
-type ptrParam interface{}
-
-func ptr[T ptrParam](v T) *T {
+func ptr[T any](v T) *T {
 	return &v
 }
 
