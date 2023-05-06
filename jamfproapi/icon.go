@@ -23,9 +23,17 @@ type Icon struct {
 }
 
 type IconContentOptions struct {
-	Res   *string `url:"res,omitempty"`
-	Scale *string `url:"scale,omitempty"`
+	Res   *IconContentOptionsRes `url:"res,omitempty"`
+	Scale *string                `url:"scale,omitempty"`
 }
+
+type IconContentOptionsRes string
+
+const (
+	IconContentOptionsResOriginal IconContentOptionsRes = "original"
+	IconContentOptionsRes300      IconContentOptionsRes = "300"
+	IconContentOptionsRes512      IconContentOptionsRes = "512"
+)
 
 const iconPath = "/v1/icon"
 
