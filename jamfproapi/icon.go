@@ -29,7 +29,7 @@ type IconContentOptions struct {
 
 const iconPath = "/v1/icon"
 
-func (s *IconService) Download(ctx context.Context, iconID string, options IconContentOptions) (*jamf.Response, error) {
+func (s *IconService) Download(ctx context.Context, iconID int, options IconContentOptions) (*jamf.Response, error) {
 	params, err := query.Values(options)
 	if err != nil {
 		return nil, fmt.Errorf("query.Values(): %v", err)
@@ -38,7 +38,7 @@ func (s *IconService) Download(ctx context.Context, iconID string, options IconC
 	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
 		Uri: jamf.Uri{
-			Entity: path.Join(iconPath, "download", iconID),
+			Entity: path.Join(iconPath, "download", fmt.Sprint(iconID)),
 			Params: params,
 		},
 	})
@@ -50,11 +50,11 @@ func (s *IconService) Download(ctx context.Context, iconID string, options IconC
 	return resp, nil
 }
 
-func (s *IconService) Get(ctx context.Context, iconID string) (*Icon, *jamf.Response, error) {
+func (s *IconService) Get(ctx context.Context, iconID int) (*Icon, *jamf.Response, error) {
 	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
 		Uri: jamf.Uri{
-			Entity: path.Join(iconPath, iconID),
+			Entity: path.Join(iconPath, fmt.Sprint(iconID)),
 		},
 	})
 

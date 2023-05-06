@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -20,11 +20,11 @@ func TestIconService_Download(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	iconID := "1"
+	iconID := 1
 
 	want, _ := base64.StdEncoding.DecodeString(blackPNGImage)
 
-	mux.HandleFunc(buildHandlePath(iconPath, "download", iconID), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(buildHandlePath(iconPath, "download", fmt.Sprint(iconID)), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 
 		w.WriteHeader(http.StatusOK)
@@ -54,9 +54,9 @@ func TestIconService_Get(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	iconID := "1"
+	iconID := 1
 
-	mux.HandleFunc(buildHandlePath(iconPath, iconID), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(buildHandlePath(iconPath, fmt.Sprint(iconID)), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 
 		w.WriteHeader(http.StatusOK)
@@ -73,9 +73,8 @@ func TestIconService_Get(t *testing.T) {
 		t.Fatalf("Icon.Get(): %v", err)
 	}
 
-	iconIDInt, _ := strconv.Atoi(iconID)
 	want := &Icon{
-		ID:   ptr(iconIDInt),
+		ID:   ptr(iconID),
 		Name: ptr("test.png"),
 		URL:  ptr("https://stage-ics.services.jamfcloud.com/icon/hash_c315ef577b84505de1bfcb50b0c4b1c963da30b2a805f84b24ad09f282b7fad4"),
 	}
