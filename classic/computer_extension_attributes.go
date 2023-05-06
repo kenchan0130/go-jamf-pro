@@ -37,6 +37,8 @@ type ComputerExtensionAttributeInputType struct {
 	Type *ComputerExtensionAttributeInputTypeType `xml:"type,omitempty"`
 	// The 'platform' field is not documented, but it actually exists in the API response.
 	Platform *ComputerExtensionAttributeInputTypePlatform `xml:"platform,omitempty"`
+	// The 'popup_choices' field is not documented, but it actually exists in the API response.
+	PopupChoices *[]string `xml:"popup_choices>choice,omitempty"`
 	// The 'script' field is not documented, but it actually exists in the API response.
 	Script *string `xml:"script,omitempty"`
 }
