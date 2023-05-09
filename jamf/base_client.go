@@ -28,7 +28,7 @@ type ValidStatusFunc func(*http.Response) bool
 type HttpRequestInput interface {
 	GetRequestMiddlewareFunc() RequestMiddlewareFunc
 	GetConsistencyFailureFunc() ConsistencyFailureFunc
-	GetContentType() string
+	GetContentType(defaultType string) string
 	GetValidStatusCodes() []int
 	GetValidStatusFunc() ValidStatusFunc
 }
@@ -48,6 +48,7 @@ type BaseClient struct {
 	BaseURL            *url.URL
 	AuthorizationToken *string
 	DisableRetries     bool
+	DefaultContentType string
 
 	// HttpClient is the underlying http.Client, which by default uses a retryable client
 	HttpClient      *http.Client
@@ -87,7 +88,9 @@ func (c *BaseClient) buildUri(uri Uri) string {
 func (c *BaseClient) performRequest(req *http.Request, input HttpRequestInput) (*http.Response, int, error) {
 	var status int
 
-	req.Header.Add("Content-Type", input.GetContentType())
+	if contentType := input.GetContentType(c.DefaultContentType); contentType != "" {
+		req.Header.Add("Content-Type", input.GetContentType(c.DefaultContentType))
+	}
 	if c.AuthorizationToken != nil {
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", *c.AuthorizationToken))
 	}
@@ -162,6 +165,7 @@ func containsStatusCode(expected []int, actual int) bool {
 type DeleteHttpRequestInput struct {
 	ConsistencyFailureFunc ConsistencyFailureFunc
 	RequestMiddlewareFunc  RequestMiddlewareFunc
+	ContentType            string
 	Uri                    Uri
 	ValidStatusCodes       []int
 	ValidStatusFunc        ValidStatusFunc
@@ -172,9 +176,12 @@ func (i DeleteHttpRequestInput) GetConsistencyFailureFunc() ConsistencyFailureFu
 	return i.ConsistencyFailureFunc
 }
 
-// GetContentType returns the content type for the request, currently only application/json is supported
-func (i DeleteHttpRequestInput) GetContentType() string {
-	return "application/json; charset=utf-8"
+// GetContentType returns the content type for the request.
+func (i DeleteHttpRequestInput) GetContentType(defaultType string) string {
+	if i.ContentType != "" {
+		return i.ContentType
+	}
+	return defaultType
 }
 
 func (i DeleteHttpRequestInput) GetRequestMiddlewareFunc() RequestMiddlewareFunc {
@@ -225,12 +232,12 @@ func (i GetHttpRequestInput) GetConsistencyFailureFunc() ConsistencyFailureFunc 
 	return i.ConsistencyFailureFunc
 }
 
-// GetContentType returns the content type for the request, defaults to application/json
-func (i GetHttpRequestInput) GetContentType() string {
+// GetContentType returns the content type for the request.
+func (i GetHttpRequestInput) GetContentType(defaultType string) string {
 	if i.ContentType != "" {
 		return i.ContentType
 	}
-	return "application/json; charset=utf-8"
+	return defaultType
 }
 
 func (i GetHttpRequestInput) GetRequestMiddlewareFunc() RequestMiddlewareFunc {
@@ -284,12 +291,12 @@ func (i PatchHttpRequestInput) GetConsistencyFailureFunc() ConsistencyFailureFun
 	return i.ConsistencyFailureFunc
 }
 
-// GetContentType returns the content type for the request, defaults to application/json
-func (i PatchHttpRequestInput) GetContentType() string {
+// GetContentType returns the content type for the request.
+func (i PatchHttpRequestInput) GetContentType(defaultType string) string {
 	if i.ContentType != "" {
 		return i.ContentType
 	}
-	return "application/json; charset=utf-8"
+	return defaultType
 }
 
 func (i PatchHttpRequestInput) GetRequestMiddlewareFunc() RequestMiddlewareFunc {
@@ -348,12 +355,12 @@ func (i PostHttpRequestInput) GetConsistencyFailureFunc() ConsistencyFailureFunc
 	return i.ConsistencyFailureFunc
 }
 
-// GetContentType returns the content type for the request, defaults to application/json
-func (i PostHttpRequestInput) GetContentType() string {
+// GetContentType returns the content type for the request.
+func (i PostHttpRequestInput) GetContentType(defaultType string) string {
 	if i.ContentType != "" {
 		return i.ContentType
 	}
-	return "application/json; charset=utf-8"
+	return defaultType
 }
 
 func (i PostHttpRequestInput) GetRequestMiddlewareFunc() RequestMiddlewareFunc {
@@ -412,12 +419,12 @@ func (i PutHttpRequestInput) GetConsistencyFailureFunc() ConsistencyFailureFunc 
 	return i.ConsistencyFailureFunc
 }
 
-// GetContentType returns the content type for the request, defaults to application/json
-func (i PutHttpRequestInput) GetContentType() string {
+// GetContentType returns the content type for the request.
+func (i PutHttpRequestInput) GetContentType(defaultType string) string {
 	if i.ContentType != "" {
 		return i.ContentType
 	}
-	return "application/json; charset=utf-8"
+	return defaultType
 }
 
 func (i PutHttpRequestInput) GetRequestMiddlewareFunc() RequestMiddlewareFunc {
