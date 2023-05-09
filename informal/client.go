@@ -36,6 +36,7 @@ func NewClient(serverURL string, username string, password string) (*Client, err
 	}
 
 	client := jamf.NewBaseClient(u)
+	client.DefaultContentType = "application/json; charset=utf-8"
 
 	c := &Client{
 		BaseClient: client,

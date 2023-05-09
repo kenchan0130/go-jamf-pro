@@ -40,6 +40,7 @@ func NewClient(serverURL string) (*Client, error) {
 	u.Path = path.Join(u.Path, apiEndpointPath)
 
 	client := jamf.NewBaseClient(u)
+	client.DefaultContentType = "application/xml; charset=utf-8"
 
 	c := &Client{
 		BaseClient: client,
