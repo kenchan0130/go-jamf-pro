@@ -251,6 +251,8 @@ func (s *OSXConfigurationProfilesService) Delete(ctx context.Context, osxConfigu
 func (s *OSXConfigurationProfilesService) Get(ctx context.Context, osxConfigurationProfileID int) (*OSXConfigurationProfile, *jamf.Response, error) {
 	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(osxConfigurationProfilesPath, "id", fmt.Sprint(osxConfigurationProfileID)),
 		},

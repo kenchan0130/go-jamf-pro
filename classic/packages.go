@@ -133,6 +133,8 @@ func (s *PackagesService) Delete(ctx context.Context, packageID int) (*jamf.Resp
 func (s *PackagesService) Get(ctx context.Context, packageID int) (*Package, *jamf.Response, error) {
 	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(packagesPath, "id", fmt.Sprint(packageID)),
 		},
