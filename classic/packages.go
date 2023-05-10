@@ -118,6 +118,8 @@ func (s *PackagesService) Create(ctx context.Context, pkg *Package) (*int, *jamf
 func (s *PackagesService) Delete(ctx context.Context, packageID int) (*jamf.Response, error) {
 	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(packagesPath, "id", fmt.Sprint(packageID)),
 		},
@@ -210,6 +212,8 @@ func (s *PackagesService) Update(ctx context.Context, pkg *Package) (*jamf.Respo
 
 	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(packagesPath, "id", fmt.Sprint(*pkg.ID)),
 		},

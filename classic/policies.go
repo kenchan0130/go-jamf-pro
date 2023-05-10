@@ -732,6 +732,8 @@ func (s *PoliciesService) Create(ctx context.Context, policy *Policy) (*int, *ja
 func (s *PoliciesService) Delete(ctx context.Context, policyID int) (*jamf.Response, error) {
 	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(policiesPath, "id", fmt.Sprint(policyID)),
 		},
@@ -747,6 +749,8 @@ func (s *PoliciesService) Delete(ctx context.Context, policyID int) (*jamf.Respo
 func (s *PoliciesService) Get(ctx context.Context, policyID int) (*Policy, *jamf.Response, error) {
 	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(policiesPath, "id", fmt.Sprint(policyID)),
 		},
@@ -828,6 +832,8 @@ func (s *PoliciesService) Update(ctx context.Context, policy *Policy) (*jamf.Res
 
 	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(policiesPath, "id", fmt.Sprint(*policy.General.ID)),
 		},
