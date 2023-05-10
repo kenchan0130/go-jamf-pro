@@ -5,6 +5,7 @@ package classic
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"path"
 
@@ -55,4 +56,9 @@ func NewClient(serverURL string) (*Client, error) {
 	c.Policies = (*PoliciesService)(&c.common)
 
 	return c, nil
+}
+
+// RetryOn404ConsistencyFailureFunc can be used to retry a request when a 404 response is received
+func RetryOn404ConsistencyFailureFunc(resp *http.Response) bool {
+	return resp != nil && resp.StatusCode == http.StatusNotFound
 }

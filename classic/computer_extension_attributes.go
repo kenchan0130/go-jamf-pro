@@ -155,6 +155,8 @@ func (s *ComputerExtensionAttributesService) Delete(ctx context.Context, compute
 func (s *ComputerExtensionAttributesService) Get(ctx context.Context, computerExtensionAttributeID int) (*ComputerExtensionAttribute, *jamf.Response, error) {
 	resp, _, err := s.client.Get(ctx, jamf.GetHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(computerExtensionAttributesPath, "id", fmt.Sprint(computerExtensionAttributeID)),
 		},
