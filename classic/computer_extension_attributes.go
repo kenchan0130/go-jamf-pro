@@ -140,6 +140,8 @@ func (s *ComputerExtensionAttributesService) Create(ctx context.Context, compute
 func (s *ComputerExtensionAttributesService) Delete(ctx context.Context, computerExtensionAttributeID int) (*jamf.Response, error) {
 	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(computerExtensionAttributesPath, "id", fmt.Sprint(computerExtensionAttributeID)),
 		},
@@ -235,6 +237,8 @@ func (s *ComputerExtensionAttributesService) Update(ctx context.Context, compute
 
 	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(computerExtensionAttributesPath, "id", fmt.Sprint(*computerExtensionAttribute.ID)),
 		},

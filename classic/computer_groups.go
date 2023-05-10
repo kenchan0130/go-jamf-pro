@@ -153,6 +153,8 @@ func (s *ComputerGroupsService) Create(ctx context.Context, computerGroup *Compu
 func (s *ComputerGroupsService) Delete(ctx context.Context, computerGroupID int) (*jamf.Response, error) {
 	resp, _, err := s.client.Delete(ctx, jamf.DeleteHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusOK},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(computerGroupsPath, "id", fmt.Sprint(computerGroupID)),
 		},
@@ -251,6 +253,8 @@ func (s *ComputerGroupsService) Update(ctx context.Context, computerGroup *Compu
 
 	resp, _, err := s.client.Put(ctx, jamf.PutHttpRequestInput{
 		ValidStatusCodes: []int{http.StatusCreated},
+		// The API may return a 404, e.g., when a resource is just created.
+		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
 		Uri: jamf.Uri{
 			Entity: path.Join(computerGroupsPath, "id", fmt.Sprint(*computerGroup.ID)),
 		},
