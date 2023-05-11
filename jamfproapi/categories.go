@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/go-querystring/query"
 	"github.com/kenchan0130/go-jamf-pro/jamf"
+	"github.com/kenchan0130/go-jamf-pro/utils"
 )
 
 type CategoriesService service
@@ -53,11 +54,7 @@ func (s *CategoriesService) Create(ctx context.Context, category *Category) (*st
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Post(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -127,11 +124,7 @@ func (s *CategoriesService) Get(ctx context.Context, categoryID string) (*Catego
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -163,11 +156,7 @@ func (s *CategoriesService) List(ctx context.Context, options ListOptions) (*Lis
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -209,11 +198,7 @@ func (s *CategoriesService) Update(ctx context.Context, category *Category) (*Ca
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Put(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {

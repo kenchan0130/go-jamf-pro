@@ -11,6 +11,7 @@ import (
 	"path"
 
 	"github.com/kenchan0130/go-jamf-pro/jamf"
+	"github.com/kenchan0130/go-jamf-pro/utils"
 )
 
 type OSXConfigurationProfilesService service
@@ -210,11 +211,7 @@ func (s *OSXConfigurationProfilesService) Create(ctx context.Context, osxConfigu
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Post(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -263,11 +260,7 @@ func (s *OSXConfigurationProfilesService) Get(ctx context.Context, osxConfigurat
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -293,11 +286,7 @@ func (s *OSXConfigurationProfilesService) List(ctx context.Context) (*ListOSXCon
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {

@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/go-querystring/query"
 	"github.com/kenchan0130/go-jamf-pro/jamf"
+	"github.com/kenchan0130/go-jamf-pro/utils"
 )
 
 type ScriptsService service
@@ -72,11 +73,7 @@ func (s *ScriptsService) Create(ctx context.Context, script *Script) (*string, *
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Post(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -120,11 +117,7 @@ func (s *ScriptsService) Get(ctx context.Context, scriptID string) (*Script, *ja
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -156,11 +149,7 @@ func (s *ScriptsService) List(ctx context.Context, options ListOptions) (*ListSc
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -199,11 +188,7 @@ func (s *ScriptsService) Update(ctx context.Context, script *Script) (*Script, *
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Put(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {

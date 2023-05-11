@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/kenchan0130/go-jamf-pro/jamf"
+	"github.com/kenchan0130/go-jamf-pro/utils"
 )
 
 type PoliciesService service
@@ -706,11 +707,7 @@ func (s *PoliciesService) Create(ctx context.Context, policy *Policy) (*int, *ja
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Post(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -759,11 +756,7 @@ func (s *PoliciesService) Get(ctx context.Context, policyID int) (*Policy, *jamf
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -789,11 +782,7 @@ func (s *PoliciesService) List(ctx context.Context) (*ListPolicies, *jamf.Respon
 	if err != nil {
 		return nil, nil, fmt.Errorf("client.Get(): %v", err)
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			s.client.Logger.Printf("Error closing response body: %v", err)
-		}
-	}()
+	defer utils.HandleCloseFunc(resp.Body, s.client.RetryableClient.Logger)
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {

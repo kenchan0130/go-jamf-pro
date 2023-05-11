@@ -5,6 +5,8 @@ package jamfproapi
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net/url"
 	"path"
 
@@ -62,4 +64,17 @@ func NewClient(serverURL string) (*Client, error) {
 	c.SSOFailover = (*SSOFailoverService)(&c.common)
 
 	return c, nil
+}
+
+// HandleCloseFunc can be used to close an io.ReadCloser with message
+func HandleCloseFunc(v io.ReadCloser, logger any) {
+	if err := v.Close(); err != nil {
+		l := logger.(*log.Logger)
+		if l != nil {
+			l.Printf("Error closing io: %v", err)
+			return
+		}
+
+		fmt.Printf("Error closing io: %v", err)
+	}
 }
