@@ -15,6 +15,10 @@ import (
 	"github.com/kenchan0130/go-jamf-pro/utils"
 )
 
+const (
+	DefaultRetryMax = 6
+)
+
 // ConsistencyFailureFunc is a function that determines whether an HTTP request has failed due to eventual consistency and should be retried.
 type ConsistencyFailureFunc func(*http.Response) bool
 
@@ -62,6 +66,7 @@ type Response struct {
 func NewBaseClient(baseURL *url.URL) *BaseClient {
 	r := retryablehttp.NewClient()
 	r.ErrorHandler = RetryableErrorHandler
+	r.RetryMax = DefaultRetryMax
 
 	c := &BaseClient{
 		BaseURL:         baseURL,
