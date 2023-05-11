@@ -106,7 +106,7 @@ func TestComputerExtensionAttributesService_Get(t *testing.T) {
 		InventoryDisplay: ptr(ComputerExtensionAttributeInventoryDisplayGeneral),
 	}
 	if !cmp.Equal(computerExtensionAttribute, want) {
-		t.Errorf("ComputerExtensionAttributes.Get()returned %s, want %s", formatWithSpew(computerExtensionAttribute), formatWithSpew(want))
+		t.Errorf("ComputerExtensionAttributes.Get() returned %s, want %s", formatWithSpew(computerExtensionAttribute), formatWithSpew(want))
 	}
 }
 
