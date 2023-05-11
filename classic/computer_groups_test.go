@@ -142,7 +142,7 @@ func TestComputerGroupsService_Get(t *testing.T) {
 		},
 	}
 	if !cmp.Equal(computerGroup, want) {
-		t.Errorf("ComputerGroups.Get()returned %s, want %s", formatWithSpew(computerGroup), formatWithSpew(want))
+		t.Errorf("ComputerGroups.Get() returned %s, want %s", formatWithSpew(computerGroup), formatWithSpew(want))
 	}
 }
 
