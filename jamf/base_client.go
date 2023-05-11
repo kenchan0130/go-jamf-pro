@@ -8,11 +8,15 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/kenchan0130/go-jamf-pro/utils"
+)
+
+const (
+	DefaultRetryMax = 6
 )
 
 // ConsistencyFailureFunc is a function that determines whether an HTTP request has failed due to eventual consistency and should be retried.
@@ -53,9 +57,6 @@ type BaseClient struct {
 	// HttpClient is the underlying http.Client, which by default uses a retryable client
 	HttpClient      *http.Client
 	RetryableClient *retryablehttp.Client
-
-	// Logger is the logger, which by default uses the standard log package
-	Logger *log.Logger
 }
 
 type Response struct {
@@ -65,13 +66,13 @@ type Response struct {
 func NewBaseClient(baseURL *url.URL) *BaseClient {
 	r := retryablehttp.NewClient()
 	r.ErrorHandler = RetryableErrorHandler
+	r.RetryMax = DefaultRetryMax
 
 	c := &BaseClient{
 		BaseURL:         baseURL,
 		HttpClient:      r.StandardClient(),
 		RetryableClient: r,
 		DisableRetries:  false,
-		Logger:          log.Default(),
 	}
 
 	return c
@@ -132,11 +133,7 @@ func (c *BaseClient) performRequest(req *http.Request, input HttpRequestInput) (
 			return resp, status, nil
 		}
 
-		defer func() {
-			if err := resp.Body.Close(); err != nil {
-				c.Logger.Printf("Error closing response body: %v", err)
-			}
-		}()
+		defer utils.HandleCloseFunc(resp.Body, c.RetryableClient.Logger)
 
 		respBody, err := io.ReadAll(resp.Body)
 		if err != nil {
